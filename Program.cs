@@ -21,6 +21,18 @@ builder.Services.AddRateLimiter(options =>
     }).RejectionStatusCode = 429; // Too many request
 });
 
+builder.Services.AddRateLimiter(options =>
+{
+    options.AddSlidingWindowLimiter("SlidingWindowPolicy", opt =>
+    {
+        opt.Window = TimeSpan.FromSeconds(10);
+        opt.PermitLimit = 4;
+        opt.QueueLimit = 3;
+        opt.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+        opt.SegmentsPerWindow = 3;
+    }).RejectionStatusCode = 429;
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
